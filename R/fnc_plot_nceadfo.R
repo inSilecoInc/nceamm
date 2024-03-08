@@ -259,6 +259,7 @@ plot_legend_cont <- function(
 #' @export
 plot_legend_bin <- function (
   col,
+  border = "#000000",
   cexMain = .75,
   cexSub = .5,
   minUp = .055,
@@ -288,7 +289,7 @@ plot_legend_bin <- function (
   polygon(x = c(xinit, xinit, xinit + sq*xR, xinit + sq*xR, xinit),
           y = c(ybarUp,ybarDn,ybarDn,ybarUp,ybarUp),
           col = col,
-          border = "#000000")
+          border = border)
 
 
   # Add titles

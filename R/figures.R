@@ -11,6 +11,7 @@ figures <- function() {
   out$cea_species <- here::here(out$out, "cea_species")
   out$cea_network <- here::here(out$out, "cea_network")
   out$cea <- here::here(out$out, "cea")
+  out$cea_ori <- here::here(out$out, "cea_original")
   out$footprint <- here::here(out$out, "footprint")
   out$exposure <- here::here(out$out, "exposure")
   out$diff <- here::here(out$out, "cea_difference")
@@ -153,11 +154,17 @@ figures <- function() {
     lapply(dat, plotDat, outsp[i], sub = "Cumulative effects score")
   }
 
-  # Species-scale and network-scale cumulative effects assessment
+  # Species-scale and network-scale cumulative effects assessment - nceamm
   dr <- here::here("output", "cea_full")
   dir(dr, full.names = TRUE) |>
     lapply(stars::read_stars) |>
     lapply(plotDat, out$cea, sub = "Cumulative effects score")
+
+  # Species-scale and network-scale cumulative effects assessment - original
+  dr <- here::here("output_original", "cea_full")
+  dir(dr, full.names = TRUE) |>
+    lapply(stars::read_stars) |>
+    lapply(plotDat, out$cea_ori, sub = "Cumulative effects score")
 
   # Period differences for both assessments
   dr <- here::here("output", "cea_difference")

@@ -1,7 +1,7 @@
 #' Export figures for atlas
 #'
 #' @export
-fig_atlas <- function(type = c("aoi", "footprint", "cea", "difference", "metanetwork", "contribution", "species", "drivers")) {
+fig_atlas <- function(type = c("aoi", "footprint", "cea", "difference", "metanetwork", "contribution", "species", "drivers", "nceamm")) {
   # Parameters
   hts <- 300
   img_resize <- "30%x30%"
@@ -419,7 +419,7 @@ fig_atlas <- function(type = c("aoi", "footprint", "cea", "difference", "metanet
         setNames("species") |>
         dplyr::mutate(species = gsub("_", " ", species)) |>
         dplyr::mutate(species = stringr::str_to_sentence(species))
-      
+
       tmp <- basename(dat) |>
         tools::file_path_sans_ext() |>
         stringr::str_split("-", simplify = TRUE) |>
@@ -541,5 +541,40 @@ fig_atlas <- function(type = c("aoi", "footprint", "cea", "difference", "metanet
       rm(img)
       gc()
     }
+  }
+
+  # ----------------------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------------------
+  if ("nceamm" %in% type) {
+    out <- list()
+    out$nceadfo <- here::here("figures", "cea_original")
+    out$nceamm <- here::here("figures", "cea")
+    out$atlas <- here::here("figures", "atlas", "cea")
+    chk_create(out$atlas)
+
+    # -----------------
+    # NCEAMM vs ORIGINAL
+    i1 <- magick::image_read(here::here(out$nceadfo, "ncea_2016_2021.png"))
+    i2 <- magick::image_read(here::here(out$nceamm, "ncea_2016_2021.png"))
+    img <- magick::image_append(c(i1, i2))
+
+    # Add border
+    ht <- magick::image_info(img)$height
+    img <- magick::image_border(img, glue::glue("0x{hts}"), color = "#ffffff") |>
+      magick::image_crop(glue::glue("0x{ht+hts}"))
+
+    # Add text
+    img <- nm_title(img, "Network-scale cumulative effects")
+    img <- nm_sub2(img, "Original assessment", t1_1)
+    img <- nm_sub2(img, "Updated assessment", t2_1)
+
+    # Resize
+    img <- magick::image_resize(img, img_resize)
+
+    # Export
+    img_write(img, here::here(out$atlas, "nceamm.png"))
+    rm(img)
+    gc()
   }
 }
