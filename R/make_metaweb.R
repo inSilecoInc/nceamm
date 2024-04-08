@@ -222,31 +222,100 @@ make_metaweb <- function() {
   # Update for NCEAMM 2024
   # Removing impossible interactions with marine mammals
   # Original metaweb used for assessment
-  metaweb <- vroom::vroom(here::here(path, "metaweb.csv"))
+  metaweb <- vroom::vroom(here::here(path, "metaweb.csv")) |>
+    dplyr::rename(species = `...1`)
 
   # Get taxonomy of all species in the metaweb
   input <- here::here("data", "data-integrated")
   sp <- vroom::vroom(
     here::here(input, "/species_list_marine_mammals_birds-7c150fc3/species_list_marine_mammals_birds-7c150fc3.csv")
-  ) |>
-    dplyr::filter(Class == "Mammalia")
+  )
+  birds <- dplyr::filter(sp, Class == "Aves")
+  sp <- dplyr::filter(sp, Class == "Mammalia")
+
 
   # Metaweb:
   #   column = consumer
   #   row = resource
   # Whale species should not have 1 in their respective rows, unless its another Mammalia (for simplicity here)
   # This means that rows == Mammalia and columns != Mammalia should all be = 0
-  message("In `make_metaweb.R`, we are removing all instances of marine mammals being the resource of another taxon unless it is a taxon member of the Mammalia class. This is done for simplicity, as potential predators of marine mammals are not included in the assessment. If they were (e.g. humans, sharks), this part of the code should be adjusted.")
+  message("In `make_metaweb.R`, we are removing all instances of marine mammals being the resource of another taxon unless it is killer whales (Orcinus orca). This is done for simplicity, as potential predators of marine mammals are not included in the assessment. If they were (e.g. humans, sharks), this part of the code should be adjusted.")
 
-  # Identify marine mammals from metaweb
-  # Rows with Mammalia: this is where marine mammals are considered resources
+  # 1. Rows with Mammalia: this is where marine mammals are considered resources
+  #    Set them all to 0
   uid_rows <- which(data.frame(metaweb)[, 1] %in% sp$ScientificName)
+  metaweb[uid_rows, !colnames(metaweb) == "species"] <- 0
 
-  # Columns without Mammalia: this is where species other than Mammalia are considered consumers
-  uid_cols <- which(!colnames(metaweb) %in% sp$ScientificName)[-1]
+  # 2. Set all mammalia as potential resources for Orcinus orca, except Orcinus orca (no cannibalism)
+  metaweb[uid_rows, "Orcinus orca"] <- 1
+  metaweb[metaweb$species == "Orcinus orca", "Orcinus orca"] <- 0
 
-  # Set to 0
-  metaweb[uid_rows, uid_cols] <- 0
+  # 3. Identify baleen whales of interest for NCEAMM
+  #    Remove specific resources identified as erroneous by Laura Feyrer
+  baleen <- c(
+    "Balaenoptera acutorostrata",
+    "Balaenoptera borealis",
+    "Balaenoptera musculus",
+    "Balaenoptera physalus",
+    "Megaptera novaeangliae",
+    "Physeter macrocephalus"
+  )
+  rem <- c(
+    "Boreogadus saida",
+    "Cyclopterus lumpus",
+    "Eurypharynx pelecanoides",
+    "Gadus morhua",
+    "Glyptocephalus cynoglossus",
+    "Gonatus fabricii",
+    "Gonatus steenstrupi",
+    "Histioteuthis reversa",
+    "Illex illecebrosus",
+    "Loligo pealeii",
+    "Lycodes eudipleurostictus",
+    "Lycodes pallidus",
+    "Lycodes reticulatus",
+    "Magnisudis atlantica",
+    "Mastigoteuthis",
+    "Maurolicus muelleri",
+    "Munida iris",
+    "Munida valida",
+    "Myctophidae",
+    "Nemichthys scolopaceus",
+    "Octopoteuthis",
+    "Ommastrephes",
+    "Reinhardtius hippoglossoides",
+    "Squalus acanthias",
+    "Teuthowenia megalops",
+    "Xiphias gladius",
+    "Fulmarus glacialis"
+  )
+  metaweb[metaweb$species %in% rem, baleen] <- 0
+
+  # 4. Identify toothed whales of interest for NCEAMM (do not include Orcinus orca)
+  #    Remove specific resources identified as erroneous by Laura Feyrer
+  #    Remove birds
+  toothed <- c(
+    "Delphinus delphis",
+    "Globicephala melas",
+    "Lagenorhynchus acutus",
+    "Lagenorhynchus albirostris",
+    "Mesoplodon bidens",
+    "Phocoena phocoena"
+  )
+  rem <- c(
+    "Ammodytes",
+    "Bryozoa",
+    "Euphausia",
+    "Mallotus villosus",
+    "Munida iris",
+    "Munida valida",
+    "Parathemisto",
+    "Thysanoessa raschii",
+    "Vinciguerria nimbaria",
+    "Zooplankton",
+    birds$ScientificName
+  )
+  metaweb[metaweb$species %in% rem, toothed] <- 0
 
   # Export
   utils::write.csv(metaweb, here::here(path, "metaweb_update.csv"))
