@@ -6,7 +6,7 @@ out_cea_km2 <- function() {
   # Output
   out <- here::here("output", "cea_km2")
   rcea::chk_create(out)
-  per <- dir(here::here("output", "cea_species"))
+  per <- dir(here::here("output", "ncea"))
   nper <- length(per)
 
   # Species distributions

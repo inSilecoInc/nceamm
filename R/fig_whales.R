@@ -103,7 +103,7 @@ fig_whales <- function() {
     })
 
   # pam
-  glue::glue("output/ncea/2016_2021/net/{whales_pam}.tif") |>
+  glue::glue("output_nceamm_pam/ncea/2016_2021/net/{whales_pam}.tif") |>
     lapply(function(x) {
       dat <- stars::read_stars(x)
       tmp <- stars::st_apply(dat, c("x", "y"), sum, na.rm = TRUE)
@@ -113,7 +113,7 @@ fig_whales <- function() {
 
   # wsdb
   # WARNING: PUT BACK TO 2016-2021
-  glue::glue("output_nceamm_wsdb/ncea/2010_2015/net/{whales}.tif") |>
+  glue::glue("output_nceamm_wsdb/ncea/2016_2021/net/{whales}.tif") |>
     lapply(function(x) {
       dat <- stars::read_stars(x)
       tmp <- stars::st_apply(dat, c("x", "y"), sum, na.rm = TRUE)
@@ -122,7 +122,7 @@ fig_whales <- function() {
     })
 
   # pam_wsdb
-  glue::glue("output_nceamm_pam_wsdb/ncea/2016_2021/net/{whales}.tif") |>
+  glue::glue("output/ncea/2016_2021/net/{whales}.tif") |>
     lapply(function(x) {
       dat <- stars::read_stars(x)
       tmp <- stars::st_apply(dat, c("x", "y"), sum, na.rm = TRUE)

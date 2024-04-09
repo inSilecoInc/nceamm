@@ -6,7 +6,7 @@ out_cea_full <- function() {
   # Output
   out <- here::here("output", "cea_full")
   rcea::chk_create(out)
-  per <- dir(here::here("output", "cea_species"))
+  per <- dir(here::here("output", "ncea"))
   nper <- length(per)
 
   for (i in seq_len(nper)) {
