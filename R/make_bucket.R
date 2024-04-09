@@ -20,15 +20,31 @@ make_bucket <- function() {
   out$distribution <- here::here("bucket", "distribution")
   lapply(out, rcea::chk_create)
 
-  # Assessment results
+  # Assessment results - mask to aoi
   input <- list()
-  input$direct <- here::here("output_nceamm_pam", "ncea", "2016_2021", "direct")
-  input$indirect <- here::here("output_nceamm_pam", "ncea", "2016_2021", "indirect")
-  input$net <- here::here("output_nceamm_pam", "ncea", "2016_2021", "net")
-  for (i in names(input)) fs::dir_copy(input[[i]], here::here("bucket"))
+  input$direct <- here::here("output", "ncea", "2016_2021", "direct")
+  input$indirect <- here::here("output", "ncea", "2016_2021", "indirect")
+  input$net <- here::here("output", "ncea", "2016_2021", "net")
+  for (i in names(input)) {
+    sp <- dir(input[[i]], full.names = TRUE)
+    for (j in seq_len(length(sp))) {
+      stars::read_stars(sp[j], quiet = TRUE) |>
+        split() |>
+        mask_aoi() |>
+        merge() |>
+        as("Raster") |>
+        terra::rast() |>
+        terra::writeRaster(
+          filename = here::here(out[[i]], basename(sp[j])),
+          filetype = "COG",
+          gdal = c("COMPRESS=LZW", "TILED=YES", "OVERVIEW_RESAMPLING=AVERAGE"),
+          overwrite = TRUE
+        )
+    }
+  }
 
   # Species distribution
-  load(here::here("data", "FormatData_nceamm_pam", "biotic.RData"))
+  load(here::here("data", "FormatData_nceamm_pam_wsdb", "biotic.RData"))
   sp <- dir(input$direct) |>
     basename() |>
     tools::file_path_sans_ext()
