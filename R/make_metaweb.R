@@ -317,8 +317,13 @@ make_metaweb <- function() {
   )
   metaweb[metaweb$species %in% rem, toothed] <- 0
 
+  # Set rownames
+  metaweb <- as.data.frame(metaweb)
+  rownames(metaweb) <- metaweb$species
+  metaweb <- dplyr::select(metaweb, -species)
+
   # Export
-  utils::write.csv(metaweb, here::here(path, "metaweb_update.csv"))
+  utils::write.csv(metaweb, here::here(path, "metaweb_nceamm2024.csv"))
 
   # Export in modules as well
   out <- here::here("data", "cea_modules", "metaweb")

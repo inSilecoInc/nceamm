@@ -12,6 +12,11 @@ make_species_sensitivity <- function() {
     )
   )
 
+  # Export
+  out <- here::here("data", "cea_modules", "species_sensitivity")
+  chk_create(out)
+  write.csv(sensitivity, file = here::here(out, "species_sensitivity.csv"), row.names = FALSE)
+
   # Update for NCEAMM 2024
   # Adding vulnerability of marine mammals to fisheries
   # Get list of marine mammals
@@ -28,11 +33,12 @@ make_species_sensitivity <- function() {
     "FisheriesPLB",
     "FisheriesPHB"
   )
+  fish <- colnames(sensitivity) %in% fish
   mm <- sensitivity$species %in% sp$ScientificName
   sensitivity[mm, fish] <- 1
 
   # Export
   out <- here::here("data", "cea_modules", "species_sensitivity")
   chk_create(out)
-  write.csv(sensitivity, file = here::here(out, "species_sensitivity.csv"), row.names = FALSE)
+  write.csv(sensitivity, file = here::here(out, "species_sensitivity_nceamm2024.csv"), row.names = FALSE)
 }

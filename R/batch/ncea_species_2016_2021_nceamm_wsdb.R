@@ -19,16 +19,16 @@ library(terra)
 
 # Specify and create output folder
 per <- "2016_2021"
-output <- here::here("output", "ncea", per)
-# output <- "~/scratch/output/ncea/2016_2021/"
+# output <- here::here("output_nceamm_wsdb", "ncea", per)
+# output <- "~/scratch/output_nceamm_wsdb/ncea/2016_2021/"
 rcea::chk_create(output)
 
 # Load files for analysis
-load("data/FormatData/biotic.RData")
-load("data/FormatData/species_sensitivity.RData")
-load("data/FormatData/metaweb.RData")
-load("data/FormatData/TrophicSensitivity.RData")
-load("data/FormatData/driversRaster.RData")
+load("FormatData_nceamm_wsdb/biotic.RData")
+load("FormatData_nceamm_wsdb/species_sensitivity.RData")
+load("FormatData_nceamm_wsdb/metaweb.RData")
+load("FormatData_nceamm_wsdb/TrophicSensitivity.RData")
+load("FormatData_nceamm_wsdb/driversRaster.RData")
 drivers <- drivers[[per]]
 
 # Network-scale cumulative effects assessment

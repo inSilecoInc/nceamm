@@ -18,17 +18,17 @@ library(stars)
 library(terra)
 
 # Specify and create output folder
-per <- "2010_2015"
-output <- here::here("output_nceamm_pam_wsdb", "ncea", per)
-# output <- "~/scratch/output_nceamm_pam_wsdb/ncea/2010_2015/"
+per <- "2016_2021"
+# output <- here::here("output_nceamm_pam_wsdb", "ncea", per)
+output <- "~/scratch/output_nceamm_pam_wsdb/ncea/2016_2021/"
 rcea::chk_create(output)
 
 # Load files for analysis
-load("data/FormatData_nceamm_pam_wsdb/biotic.RData")
-load("data/FormatData_nceamm_pam_wsdb/species_sensitivity.RData")
-load("data/FormatData_nceamm_pam_wsdb/metaweb.RData")
-load("data/FormatData_nceamm_pam_wsdb/TrophicSensitivity.RData")
-load("data/FormatData_nceamm_pam_wsdb/driversRaster.RData")
+load("FormatData_nceamm_pam_wsdb/biotic.RData")
+load("FormatData_nceamm_pam_wsdb/species_sensitivity.RData")
+load("FormatData_nceamm_pam_wsdb/metaweb.RData")
+load("FormatData_nceamm_pam_wsdb/TrophicSensitivity.RData")
+load("FormatData_nceamm_pam_wsdb/driversRaster.RData")
 drivers <- drivers[[per]]
 
 # Network-scale cumulative effects assessment
@@ -38,8 +38,8 @@ drivers <- drivers[[per]]
 i <- as.numeric(commandArgs(trailingOnly = TRUE))
 rcea::ncea_species(
   focus = names(biotic)[i],
-  drivers, # [, 500:510, 300:310],
-  biotic, # [, 500:510, 300:310],
+  drivers,
+  biotic,
   species_sensitivity,
   metaweb,
   trophic_sensitivity,

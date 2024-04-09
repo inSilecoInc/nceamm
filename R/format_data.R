@@ -103,8 +103,13 @@ format_data <- function(assessment = "original") {
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # Metaweb
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  if (assessment == "original") {
+    spn <- "metaweb.csv"
+  } else {
+    spn <- "metaweb_nceamm2024.csv"
+  }
   metaweb <- vroom::vroom(
-    here::here(modules, "metaweb", "metaweb.csv")
+    here::here(modules, "metaweb", spn)
   ) |>
     as.data.frame()
   rownames(metaweb) <- metaweb[, 1]
@@ -134,8 +139,14 @@ format_data <- function(assessment = "original") {
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
   # Species-specific vulnerabilities
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+  if (assessment == "original") {
+    spn <- "species_sensitivity.csv"
+  } else {
+    spn <- "species_sensitivity_nceamm2024.csv"
+  }
+
   species_sensitivity <- vroom::vroom(
-    here::here(modules, "species_sensitivity", "species_sensitivity.csv")
+    here::here(modules, "species_sensitivity", spn)
   ) |>
     dplyr::mutate(species = gsub(" ", "_", species)) |>
     dplyr::mutate(species = tolower(species)) |>
