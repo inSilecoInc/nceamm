@@ -74,6 +74,9 @@ fig_whales <- function() {
     # Mask
     dat <- dat * aoi
 
+    # Normalize
+    dat <- dat / max(dat[[1]], na.rm = T)
+
     # Plot
     if (type == "regular") plot_nceadfo(dat, mainTitle = main, subTitle = sub)
     if (type == "dual") plot_nceadfo_dual(dat, mainTitle = main, subTitle = sub)

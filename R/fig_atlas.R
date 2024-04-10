@@ -548,15 +548,14 @@ fig_atlas <- function(type = c("aoi", "footprint", "cea", "difference", "metanet
   # ----------------------------------------------------------------------------------------
   if ("nceamm" %in% type) {
     out <- list()
-    out$nceadfo <- here::here("figures", "cea_original")
-    out$nceamm <- here::here("figures", "cea")
+    out$cea <- here::here("figures", "cea_nceamm")
     out$atlas <- here::here("figures", "atlas", "cea")
     chk_create(out$atlas)
 
     # -----------------
     # NCEAMM vs ORIGINAL
-    i1 <- magick::image_read(here::here(out$nceadfo, "ncea_2016_2021.png"))
-    i2 <- magick::image_read(here::here(out$nceamm, "ncea_2016_2021.png"))
+    i1 <- magick::image_read(here::here(out$cea, "original.png"))
+    i2 <- magick::image_read(here::here(out$cea, "nceamm.png"))
     img <- magick::image_append(c(i1, i2))
 
     # Add border
